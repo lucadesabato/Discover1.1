@@ -79,7 +79,7 @@ if args.input =='illumina':
     for file in glob.glob("*_R1*"):
         sample=file.split('_')[0]
         p1_file=file
-        p2_file=file.replace('R1', 'R2')
+        p2_file=file.replace('_R1', '_R2')
         find_p2=os.listdir('./')
         if p2_file in find_p2:
             # TRIMMING
