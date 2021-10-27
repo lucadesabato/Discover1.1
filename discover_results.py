@@ -61,7 +61,7 @@ for file in glob.glob("*_disc/"):
     os.chdir(file)
     row_sample=namesample+'\t'
 
-    if os.path.isfile("./virulotyper_results.txt")==True:
+    if os.path.isfile("./virulotyper_results.txt")==True and len("./virulotyper_results.txt")>1:
         #VIRULOTYPER RESULTS
         #read the file virulotyper_results.txt
         file1 = open('virulotyper_results.txt')
@@ -69,6 +69,7 @@ for file in glob.glob("*_disc/"):
 
         #list of genes with coverage >80.0
         geni_ED=[]
+
         for line in read_csv[1:]:
             if float(line[8])>=80.0:
                 in_line=[]
@@ -78,32 +79,37 @@ for file in glob.glob("*_disc/"):
                 in_line.append(float(line[1].split('_')[5]))
                 geni_ED.append(in_line)
 
-        #order genes by coverage, identity and read mean covrage
-        ED_best_gene=[]
-        tot_mean=[]
-        for geni in list_gene_fine:
-            list_gene=[]
-            for line in geni_ED:
-                if line[0].split('_')[0]==geni:
-                    list_gene.append(line)
-                    tot_mean.append(line[3])
-
-            s = sorted(list_gene, key=operator.itemgetter(1, 2, 3), reverse=True)
+        #order genes by coverage, identity and read mean coverage
+        if geni_ED:
+            ED_best_gene=[]
+            tot_mean=[]
+            for geni in list_gene_fine:
+                list_gene=[]
+                for line in geni_ED:
+                    if line[0].split('_')[0]==geni:
+                        list_gene.append(line)
+                        tot_mean.append(line[3])
+            s=sorted(list_gene, key=operator.itemgetter(1, 2, 3), reverse=True)
             if len(s)!=0:
                 ED_best_gene.append(s[0])
 
-        #coverage mean
-        mean_gene=str(round(mean(tot_mean)))
+            #coverage mean
+            mean_gene=str(round(mean(tot_mean)))
 
-        #empty list from list_gene_fine
-        find_gene=['0']*len(list_gene_fine)
-        for x in ED_best_gene:
-            gen = x[0].split('_')[0]
-            for c in list_gene_fine:
-                if gen==c:
-                    find_gene[list_gene_fine.index(c)]=x[0]
-        file1.close()
+            #empty list from list_gene_fine
+            find_gene=['0']*len(list_gene_fine)
+            for x in ED_best_gene:
+                gen = x[0].split('_')[0]
+                for c in list_gene_fine:
+                    if gen==c:
+                        find_gene[list_gene_fine.index(c)]=x[0]
+            file1.close()
+        else:
+            mean_gene = "ND"
+            find_gene = ['ND'] * len(list_gene_fine)
+
     else:
+        mean_gene = "ND"
         find_gene = ['ND'] * len(list_gene_fine)
 
     if os.path.isfile("./mlst_results.txt") == True:
@@ -117,7 +123,7 @@ for file in glob.glob("*_disc/"):
     else:
         mlst="ND"
 
-    if os.path.isfile("./chewbbca_results.tsv") == True:
+    if os.path.isfile("./chewbbca_results.tsv") == True and len("./chewbbca_results.tsv")>1:
         #extract EXC+INF from chewBBACA
         file3=open('chewbbca_results.tsv')
         file3_line=file3.readlines()
@@ -126,7 +132,7 @@ for file in glob.glob("*_disc/"):
     else:
         exc="ND"
 
-    if os.path.isfile("./shigatoxin_results.txt") == True:
+    if os.path.isfile("./shigatoxin_results.txt") == True and len("./shigatoxin_results.txt")>1:
         # SHIGATOXIN TYPER
         file4 = open("shigatoxin_results.txt")
         file4_lines=file4.readlines()
@@ -136,12 +142,12 @@ for file in glob.glob("*_disc/"):
                 for c in line.strip('\n').split(' '):
                     list_of_stx += c[0:4] + c[4].lower() + '; '
         else:
-            list_of_stx+="NOT FOUND  "
+            list_of_stx+="ND  "
         file4.close()
     else:
         list_of_stx = "ND  "
 
-    if os.path.isfile("./serotyper_results.txt") == True:
+    if os.path.isfile("./serotyper_results.txt") == True and len("./serotyper_results.txt")>1:
         # SEROTYPER- STX O&H
         file5 = open("serotyper_results.txt")
         file5_lines=file5.readlines()
@@ -230,10 +236,16 @@ for file in glob.glob("*_disc/"):
         row_sample = namesample + '\t' + species[:-2] + '\t'
         if len(file4)==1:
             row_sample+= '\t' + '\t' + '\t' + '\n'
+            tab4.write(row_sample)
         else:
-            line=file4[1].split('\t')
-            row_sample+=line[0] + '\t' + line[1] + '\t' + line[2] + '\n'
-        tab4.write(row_sample)
+            list_loci = []
+            for line in file4[1:]:
+                repetition = line.split('\t')
+                list_loci.append(repetition[0] + '\t' + repetition[1] + '\t' + repetition[2].replace('\n','')+ '\n')
+            for rep in list_loci:
+                locus=row_sample+rep
+                tab4.write(locus)
+
     os.chdir('../')
 
 tab1.close()
