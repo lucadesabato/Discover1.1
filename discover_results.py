@@ -93,9 +93,6 @@ for file in glob.glob("*_disc/"):
                 if len(s)!=0:
                     ED_best_gene.append(s[0])
 
-            print(namesample)
-            print(ED_best_gene)
-
             #coverage mean
             mean_gene=str(round(mean(tot_mean)))
 
