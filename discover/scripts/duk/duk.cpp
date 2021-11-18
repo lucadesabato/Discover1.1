@@ -2,7 +2,7 @@
 #include <iostream>
 #include <fstream>
 #include <iomanip>
-#include <string.h>
+#include <cstring>
 #include <getopt.h>
 #include "sys/time.h"
 #include <unistd.h>
