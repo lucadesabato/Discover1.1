@@ -26,6 +26,7 @@ make && sudo make install
 5) duk installation. Within the main "discover" directory:
 
 cd discover/scripts/duk
+make clean
 make
 
 6) Create Virulotyper Database
