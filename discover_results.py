@@ -69,15 +69,24 @@ for file in glob.glob("*_disc/"):
 
         #list of genes with coverage >80.0
         geni_ED=[]
-
-        for line in read_csv[1:]:
-            if float(line[8])>=80.0:
-                in_line=[]
-                in_line.append(line[12])
-                in_line.append(float(line[8]))
-                in_line.append(float(line[9]))
-                in_line.append(float(line[1].split('_')[5]))
-                geni_ED.append(in_line)
+        if read_csv[0][4]!="STRAND":
+        	for line in read_csv[1:]:
+        		if float(line[8])>=80.0:
+        			in_line=[]
+        			in_line.append(line[12])
+        			in_line.append(float(line[8]))
+        			in_line.append(float(line[9]))
+        			in_line.append(float(line[1].split('_')[5]))
+        			geni_ED.append(in_line)
+        else:
+        	for line in read_csv[1:]:
+        		if float(line[9])>=80.0:
+        			in_line=[]
+        			in_line.append(line[13])
+        			in_line.append(float(line[9]))
+        			in_line.append(float(line[10]))
+        			in_line.append(float(line[1].split('_')[5]))
+        			geni_ED.append(in_line)
 
         #order genes by coverage, identity and read mean coverage
         if geni_ED:
@@ -182,15 +191,26 @@ for file in glob.glob("*_disc/"):
         #list of genes with coverage >80.0
         geni_amr = []
         list_geni_amr=[]
-        for line in read_csv[1:]:
-            if float(line[8]) >= 80.0:
-                in_line = []
-                in_line.append(line[4])
-                in_line.append(float(line[8]))
-                in_line.append(float(line[9]))
-                in_line.append(float(line[1].split('_')[5]))
-                geni_amr.append(in_line)
-                list_geni_amr.append(line[4])
+        if read_csv[0][4]!="STRAND":
+        	for line in read_csv[1:]:
+        		if float(line[8]) >= 80.0:
+        			in_line = []
+        			in_line.append(line[4])
+        			in_line.append(float(line[8]))
+        			in_line.append(float(line[9]))
+        			in_line.append(float(line[1].split('_')[5]))
+        			geni_amr.append(in_line)
+        			list_geni_amr.append(line[4])
+        else:
+        	for line in read_csv[1:]:
+        		if float(line[9]) >= 80.0:
+        			in_line = []
+        			in_line.append(line[5])
+        			in_line.append(float(line[9]))
+        			in_line.append(float(line[10]))
+        			in_line.append(float(line[1].split('_')[5]))
+        			geni_amr.append(in_line)
+        			list_geni_amr.append(line[5])
 
         list_geni_amr=list(set(list_geni_amr))
 
