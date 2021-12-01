@@ -265,7 +265,9 @@ for file in glob.glob("*_disc/"):
             for rep in list_loci:
                 locus=row_sample+rep
                 tab4.write(locus)
-
+    else:
+		row_sample+= '\t' + '\t' + '\t' + '\n'
+		tab4.write(row_sample)
     os.chdir('../')
 
 tab1.close()
