@@ -15,20 +15,23 @@ $tooldir/discover/scripts/duk/duk -m stxdir/filtered2STX.fq -k 23 $tooldir/disco
 $tooldir/discover/scripts/fastq-pair-master/build/fastq_pair stxdir/filtered1STX.fq stxdir/filtered2STX.fq;
 $tooldir/discover/scripts/fastq-pair-master/build/fastq_pair stxdir/filtered1STX.fq.single.fq $fastqfile2;
 $tooldir/discover/scripts/fastq-pair-master/build/fastq_pair stxdir/filtered2STX.fq.single.fq $fastqfile1;
+
 cat stxdir/filtered1STX.fq.paired.fq > stxdir/filtered1STX_paired.fq;
 cat stxdir/filtered1STX.fq.single.fq.paired.fq >> stxdir/filtered1STX_paired.fq;
-cat trimmed1.paired.fq >> stxdir/filtered1STX_paired.fq;
-#cat $fastqfile1 >> stxdir/filtered1STX_paired.fq;
+cat $fastqfile1 >> stxdir/filtered1STX_paired.fq;
+
 cat stxdir/filtered2STX.fq.paired.fq > stxdir/filtered2STX_paired.fq;
-cat trimmed2.paired.fq >> stxdir/filtered2STX_paired.fq;
-#cat $fastqfile2 >> stxdir/filtered2STX_paired.fq;
+cat $fastqfile2 >> stxdir/filtered2STX_paired.fq;
 cat stxdir/filtered2STX.fq.single.fq.paired.fq >> stxdir/filtered2STX_paired.fq;
+
+$tooldir/discover/scripts/fastq-pair-master/build/fastq_pair stxdir/filtered1STX_paired.fq stxdir/filtered2STX_paired.fq;
+
 dukstx1filesize=$(wc -c "stxdir/filtered1STX_paired.fq" | awk '{print $1}');
 dukstx2filesize=$(wc -c "stxdir/filtered2STX_paired.fq" | awk '{print $1}');
 if [ $dukstx1filesize -gt 0 ] && [ $dukstx2filesize -gt 0 ]
 then
-  skesa --fastq stxdir/filtered1STX_paired.fq stxdir/filtered2STX_paired.fq --contigs_out stxdir/duk_skesa.fasta;
-  perl $tooldir/discover/scripts/spades.pl duk_spades_contigs duk_spades_contig_stats duk_spades_scaffolds duk_spades_scaffold_stats duk_spades_log NODE spades.py --disable-gzip-output --isolate -t 8 --pe1-ff --pe1-1 stxdir/filtered1STX_paired.fq --pe1-2 stxdir/filtered2STX_paired.fq
+  skesa --fastq stxdir/filtered1STX_paired.fq.paired.fq stxdir/filtered2STX_paired.fq.paired.fq --contigs_out stxdir/duk_skesa.fasta;
+  perl $tooldir/discover/scripts/spades.pl duk_spades_contigs duk_spades_contig_stats duk_spades_scaffolds duk_spades_scaffold_stats duk_spades_log NODE spades.py --disable-gzip-output --isolate -t 8 --pe1-ff --pe1-1 stxdir/filtered1STX_paired.fq.paired.fq --pe1-2 stxdir/filtered2STX_paired.fq.paired.fq
   mv duk_spades_contigs stxdir/duk_spades.fasta;
   rm -r output_dir;
   blastn -query stxdir/duk_skesa.fasta -db $tooldir/discover/data/stx -task blastn -evalue 0.001 -out stxdir/duk_skesa_seqs -outfmt '6 qseqid sseqid sframe qseq' -num_threads 8 -strand both -dust yes -max_target_seqs 1 -perc_identity 95.0;
