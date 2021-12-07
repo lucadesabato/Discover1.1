@@ -18,16 +18,14 @@ $tooldir/discover/scripts/fastq-pair-master/build/fastq_pair stxdir/filtered2STX
 
 cat stxdir/filtered1STX.fq.paired.fq > stxdir/filtered1STX_paired.fq;
 cat stxdir/filtered1STX.fq.single.fq.paired.fq >> stxdir/filtered1STX_paired.fq;
-cat $fastqfile1 >> stxdir/filtered1STX_paired.fq;
 
 cat stxdir/filtered2STX.fq.paired.fq > stxdir/filtered2STX_paired.fq;
-cat $fastqfile2 >> stxdir/filtered2STX_paired.fq;
 cat stxdir/filtered2STX.fq.single.fq.paired.fq >> stxdir/filtered2STX_paired.fq;
 
 $tooldir/discover/scripts/fastq-pair-master/build/fastq_pair stxdir/filtered1STX_paired.fq stxdir/filtered2STX_paired.fq;
 
-dukstx1filesize=$(wc -c "stxdir/filtered1STX_paired.fq" | awk '{print $1}');
-dukstx2filesize=$(wc -c "stxdir/filtered2STX_paired.fq" | awk '{print $1}');
+dukstx1filesize=$(wc -c "stxdir/filtered1STX_paired.fq.paired.fq" | awk '{print $1}');
+dukstx2filesize=$(wc -c "stxdir/filtered2STX_paired.fq.paired.fq" | awk '{print $1}');
 if [ $dukstx1filesize -gt 0 ] && [ $dukstx2filesize -gt 0 ]
 then
   skesa --fastq stxdir/filtered1STX_paired.fq.paired.fq stxdir/filtered2STX_paired.fq.paired.fq --contigs_out stxdir/duk_skesa.fasta;
